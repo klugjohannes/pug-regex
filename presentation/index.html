@@ -15,7 +15,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 		<link rel="stylesheet" href="css/reveal.min.css">
-		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="css/theme/solarized.css" id="theme">
 
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -77,6 +77,203 @@ Adam Apfel  +41(2352)3749237
         </section>
 
 
+
+
+
+
+<section>
+<h2>Theory</h2>
+<ul>
+  <li> An <b>alphabet</b> is a set of characters, e.g. <code>{a,b,c,?,(,)}</code>. </i>
+  <li> A <b>word</b> is a string made from the characters of an alphabet. </i>
+  <li> A (formal) <b>language</b> is a (possibly infinite, but clearly defined) set of words from one alphabet. </li>
+</ul>
+</section>
+
+
+<section>
+<h2>Theory</h2>
+<ul>
+  <li> Formal languages can be classified into levels of complexity (or power), the so-called <b>Chomsky hierarchy</b>. </li>
+  <li> <b>Regular languages</b> are the lowest and “weakest” level and represent a tiny (but still infinite) subset of all languages. </li>
+  <li> <b>Finite automata</b> recognize regular languages. </li>
+  <li> Finite automata, regular languages, regular grammars and <b>regular expressions</b> are equivalent*. </li>
+</ul>
+<p>
+  <br/>
+  <small>* What Python calls “regular expressions” is more powerful than that.</small>
+</p>
+</section>
+
+
+<section>
+<h2>Theory</h2>
+<p>
+  The finite automaton
+  <img src="maaax-automaton.png" style="border:none;box-shadow:none"/> <br/>
+  recognizes the language {mx, max, maax, maaax, ...}.
+</p>
+<p class="fragment">
+  This language is also described by the equivalent regular expression <code> (ma*x)</code>
+</p>
+</section>
+
+
+
+<section>
+  <h2>Groups</h2>
+  <p>
+    Groups allow access to parts of the match.
+  </p>
+  <pre><code data-trim contenteditable class="python">
+&gt;&gt;&gt; text = 'Max Muster  +49(0761)123123'
+
+&gt;&gt;&gt; RE = re.compile(r'[\w\s]+\+?[\d()/]+')
+&gt;&gt;&gt; print RE.search(text).group()
+Max Muster  +49(0761)123123
+
+&gt;&gt;&gt; RE = re.compile(r'([\w\s]+)(\+?[\d()/]+)')
+&gt;&gt;&gt; print RE.search(text).groups()
+('Max Muster  ', '+49(0761)123123')
+
+&gt;&gt;&gt; RE = re.compile(r'([\w\s]+?)\s*(\+?[\d()/]+)')
+&gt;&gt;&gt; print RE.search(text).groups()
+('Max Muster', '+49(0761)123123')
+  </code></pre>
+</section>
+
+
+<section>
+  <h2>Named groups</h2>
+  <p>
+    Named groups additionally allow <i>identifiers</i> for groups.
+  </p>
+  <pre><code data-trim contenteditable class="python">
+&gt;&gt;&gt; text = 'Max Muster  +49(0761)123123'
+
+&gt;&gt;&gt; RE = re.compile(r'([\w\s]+?)\s*(\+?[\d()/]+)')
+&gt;&gt;&gt; print RE.search(text).groups()
+('Max Muster', '+49(0761)123123')
+
+&gt;&gt;&gt; RE = re.compile(r'(?P&lt;Name&gt;[\w\s]+?)\s*(?P&lt;Number&gt;\+?[\d()/]+)')
+&gt;&gt;&gt; print RE.search(text).groupdict().items()
+[('Name', 'Max Muster'), ('Number', '+49(0761)123123')]
+  </code></pre>
+</section>
+
+
+<section>
+  <h2>Backreferences</h2>
+  <p>
+    Using <b>backreferences</b>, a regex can reuse the matched text from an earlier group:
+  </p>
+  <pre><code data-trim contenteditable class="python">
+&gt;&gt;&gt; transactions = [# Everything ok
+...                 'DONOR: Bill Gates; RECIPIENT: Thomas Edison',   
+...                 # Suspicious transaction! 
+...                 'DONOR: Max Muster; RECIPIENT: Max Muster'   
+...                ]
+&gt;&gt;&gt; RE_suspicious = re.compile(r'.*: (?P&lt;Donor&gt;.*); .*: (?P=Donor)')
+&gt;&gt;&gt; for ta in transactions:
+...   match = RE_suspicious.search(ta)
+...   if match is not None:
+...     print '!!! Suspicious transaction by', match.groupdict()['Donor']
+!!! Suspicious transaction by Max Muster
+   </code></pre>
+</section>
+
+
+<section>
+  <h2>(Non-)Greedy matching</h2>
+  <p>
+    Regexes normally match as much as they can, but sometimes that is not desirable, e.g. when parsing HTML tags:
+  </p>
+  <pre><code data-trim contenteditable class="python">
+&gt;&gt;&gt; text = '&lt;h1&gt; Header &lt;/h1&gt;'
+
+&gt;&gt;&gt; RE = re.compile(r'&lt;.*&gt;')   # Greedy
+&gt;&gt;&gt; print RE.search(text).group()
+&lt;h1&gt; Header &lt;/h1&gt;
+
+&gt;&gt;&gt; RE = re.compile(r'&lt;.*?&gt;')  # Non-greedy
+&gt;&gt;&gt; print RE.search(text).group()
+&lt;h1&gt;
+  </code></pre>
+  <p class="fragment">
+    Make greedy operators <code> *,+,?</code> non-greedy by appending a question mark: <code> *?,+?,??</code>.
+  </p>
+</section>
+
+
+<section>
+  <h2>Compilation flags</h2>
+  <ul>
+    <li> <code>IGNORECASE</code> makes the regex case-insensitive </li>
+    <li> <code>UNICODE</code> allows matching unicode characters </li>
+    <li> more flags: <code>DEBUG</code>, <code>MULTILINE</code>, <code>LOCALE</code> </li>
+  </ul>
+  <pre><code class="python">
+&gt;&gt;&gt; re.compile(pattern, re.UNICODE | re.IGNORECASE | ...)
+  </code></pre>
+</section>
+
+
+<section>
+  <h2>Compilation flags</h2>
+  <p> 
+    <code>VERBOSE</code> allows arbitrary whitespace and comments within the pattern and is useful when writing complex regexes
+  </p>
+  <pre><code class="python">
+&gt;&gt;&gt; re.compile(r'''
+... (?P&lt;Name&gt;[\w\s]+?)        # Person's name
+... \s*                       # (whitespace divider)
+... (?P&lt;Number&gt;\+?[\d()/]+)   # Person's phone number
+... ''', 
+... re.VERBOSE)
+  </code></pre>
+  <p class="fragment">
+    <b>Caveat</b>: To match a literal whitespace when using this flag, it has to be escaped.
+  </p>
+</section>
+
+
+<section>
+  <h2>Limitations of Python</h2>
+  <p> 
+    Python regexes do not support <i>overlapping</i> matches.
+  </p>
+  <pre><code class="python">
+&gt;&gt;&gt; text = '123 456 789 012 345'
+&gt;&gt;&gt; RE = re.compile(r'\d{3} \d{3}')     # Two three-digit groups
+&gt;&gt;&gt; for match in RE.finditer(text):
+...   print match.span()
+(0, 7)
+(8, 15)
+  </code></pre>
+  <p class="fragment">
+    Solution: DIY or use the <code>regex</code> module* <br/>
+    <small>*https://pypi.python.org/pypi/regex</small>
+  </p>
+
+</section>
+
+
+
+
+<section>
+<h2>fin | ende | (?:the )? end</h2>
+</section>
+
+
+
+
+
+
+
+
+
+
+
 			</div>
 
 		</div>
@@ -95,7 +292,7 @@ Adam Apfel  +41(2352)3749237
 				center: true,
 
 				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
 
 				// Parallax scrolling
 				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
