@@ -165,7 +165,7 @@ Max Muster  +49(0761)123123
 <section>
   <h2>Backreferences</h2>
   <p>
-    Using <b>backreferences</b>, a regex can reuse the matched text from an earlier group:
+    Using <b>backreferences</b>, a regex can reuse the matched text from an earlier group. Let’s try to identify monetary transactions where the recipient is the same as the donor:
   </p>
   <pre><code data-trim contenteditable class="python">
 &gt;&gt;&gt; transactions = [# Everything ok
@@ -180,6 +180,11 @@ Max Muster  +49(0761)123123
 ...     print '!!! Suspicious transaction by', match.groupdict()['Donor']
 !!! Suspicious transaction by Max Muster
    </code></pre>
+  <p class="fragment">
+    <small>
+      This exceeds the theoretical capabilities of formal “regular” expressions and languages.
+    </small>
+  </p>
 </section>
 
 
@@ -233,6 +238,27 @@ Max Muster  +49(0761)123123
   </code></pre>
   <p class="fragment">
     <b>Caveat</b>: To match a literal whitespace when using this flag, it has to be escaped.
+  </p>
+</section>
+
+
+<section>
+  <h2> Interlude: Flags mechanic </h2>
+  <p>
+    This usage pattern is typical for “flags”: Their values are numbers with a single 1 in their binary representation:
+  </p>
+  <pre><code>
+re.UNICODE = 64 = 0x01000000 
+re.IGNORECASE = 32 = 0x00100000 
+  </code></pre>
+  <p>
+    When chained with “|”, the 1s accumulate:
+  </p>
+  <pre><code>
+re.UNICODE | re.IGNORECASE = 0x01100000
+  </code></pre>
+  <p>
+    The runtime can then check which positions are 1.
   </p>
 </section>
 
