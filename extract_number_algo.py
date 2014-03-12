@@ -22,15 +22,11 @@ def extract_data(data):
     data = data.splitlines()
 
     for dataset in data:
-        name = ''
-        number = ''
-
         for index, char in enumerate(dataset):
             if char in (string.digits + '+'):
-                number = dataset[index:].strip()
+                print(dataset[index:].strip())
                 break
 
-        print(number)
 
 if __name__ == '__main__':
     import doctest
