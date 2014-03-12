@@ -66,8 +66,12 @@ pattern = re.compile(r'(bar)')
 pattern
 
 
-# the pattern object has the same functions that can be found in the re module
+# *the pattern object has the same functions that can be found in the re module
 pattern.search('foobar')
+
+# * compiling is useful if you use a lot of different regexes in your code,
+#   the re module keeps a cache of up to 100 regular expressions
+dict(list(re._cache)[:10])
 
 
 ### slide::
@@ -80,8 +84,11 @@ re.search(r'(.*)',
           'any gibberish you might think of... !"!^"£&*!"&()').groups()
 
 # non-trivial examples
-# * [a-zA-Z]
+# * [a-zA-Z], words with ascii letters, no Umlauts
 re.findall(r'([a-zA-Z]+)', 'words with ascii letters, no Umlauts')
+
+# * ma*x matches mx, max, maax, maaax, ...
+re.search('(ma*x)', 'max').groups()
 
 # * m(a|i)x matches mix and max
 re.search('(m(i|a)x)', 'mix').groups()
