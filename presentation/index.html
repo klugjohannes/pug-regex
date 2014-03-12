@@ -119,6 +119,17 @@ Adam Apfel  +41(2352)3749237
 </section>
 
 
+<section>
+  <h2>Limitations of Regular Expressions</h2>
+  <ul>
+    <li class="fragment"> <b>Regexes cannot count</b>: The language {a^i b^i} of words that have as many a’s as b’s is not regular.</li>
+    <li class="fragment"> <b>Regexes cannot remember</b>: The language {<i>w</i> a <i>w</i>} (where both <i>w</i> are the same word) is not regular*. </li>
+  </ul>
+  <p class="fragment">
+    <small>* We can still do that, though — in a minute.</small>
+  </p>
+</section>
+
 
 <section>
   <h2>Groups</h2>
@@ -140,18 +151,6 @@ Max Muster  +49(0761)123123
 &gt;&gt;&gt; print RE.search(text).groups()
 ('Max Muster', '+49(0761)123123')
   </code></pre>
-</section>
-
-
-<section>
-  <h2>Limitations of Regular Expressions</h2>
-  <ul>
-    <li class="fragment"> <b>Regexes cannot count</b>: The language {a^i b^i} of words that have as many a’s as b’s is not regular.</li>
-    <li class="fragment"> <b>Regexes cannot remember</b>: The language {<i>w</i> a <i>w</i>} (where both <i>w</i> are the same word) is not regular*. </li>
-  </ul>
-  <p class="fragment">
-    <small>* We can still do that, though — in a minute.</small>
-  </p>
 </section>
 
 
