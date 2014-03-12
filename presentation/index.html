@@ -134,9 +134,9 @@ Adam Apfel  +41(2352)3749237
 <section>
   <h2>Groups</h2>
   <p>
-    Groups allow access to parts of the match.
+    Groups “<code>(...)</code>” allow access to parts of the match.
   </p>
-  <pre><code data-trim contenteditable class="python">
+  <pre class="fragment"><code data-trim contenteditable class="python">
 &gt;&gt;&gt; text = 'Max Muster  +49(0761)123123'
 
 &gt;&gt;&gt; RE = re.compile(r'[\w\s]+\+?[\d()/]+')
@@ -157,9 +157,9 @@ Max Muster  +49(0761)123123
 <section>
   <h2>Named groups</h2>
   <p>
-    Named groups additionally allow <i>identifiers</i> for groups.
+   Named groups “<code>(?P&lt;groupname&gt;...)</code>” additionally allow <i>identifiers</i> for groups which can then be retrieved using a match’s <code> .groupdict()</code> method.
   </p>
-  <pre><code data-trim contenteditable class="python">
+  <pre class="fragment"><code data-trim contenteditable class="python">
 &gt;&gt;&gt; text = 'Max Muster  +49(0761)123123'
 
 &gt;&gt;&gt; RE = re.compile(r'([\w\s]+?)\s*(\+?[\d()/]+)')
@@ -176,9 +176,12 @@ Max Muster  +49(0761)123123
 <section>
   <h2>Backreferences</h2>
   <p>
-    Using <b>backreferences</b>, a regex can reuse the matched text from an earlier group. Let’s try to identify monetary transactions where the recipient is the same as the donor:
+    Using a <b>backreference</b> “<code>(?P=groupname)</code>”, a regex can reuse the matched text from the <i>earlier</i> named group “<code>(?P&lt;groupname&gt;...)</code>”. 
   </p>
-  <pre><code data-trim contenteditable class="python">
+  <p class="fragment">
+    Let’s try to identify monetary transactions where the recipient is the same as the donor:
+  </p>
+  <pre class="fragment"><code data-trim contenteditable class="python">
 &gt;&gt;&gt; transactions = [# Everything ok
 ...                 'DONOR: Bill Gates; RECIPIENT: Thomas Edison',   
 ...                 # Suspicious transaction! 
@@ -204,20 +207,21 @@ Max Muster  +49(0761)123123
   <p>
     Regexes normally match as much as they can, but sometimes that is not desirable, e.g. when parsing HTML tags:
   </p>
-  <pre><code data-trim contenteditable class="python">
-&gt;&gt;&gt; text = '&lt;h1&gt; Header &lt;/h1&gt;'
+  <pre class="fragment"><code data-trim contenteditable class="python">
+&gt;&gt;&gt; text = '&lt;h1&gt; Header &lt;/h1&gt;'  # We want the 'h1' tag
 
 &gt;&gt;&gt; RE = re.compile(r'&lt;.*&gt;')   # Greedy
 &gt;&gt;&gt; print RE.search(text).group()
 &lt;h1&gt; Header &lt;/h1&gt;
-
+  </code></pre>
+  <p class="fragment">
+    Make greedy operators <code> *,+,?</code> non-greedy by appending a question mark: <code> *?,+?,??</code>:
+  </p>
+  <pre class="fragment"><code data-trim contenteditable class="python">
 &gt;&gt;&gt; RE = re.compile(r'&lt;.*?&gt;')  # Non-greedy
 &gt;&gt;&gt; print RE.search(text).group()
 &lt;h1&gt;
   </code></pre>
-  <p class="fragment">
-    Make greedy operators <code> *,+,?</code> non-greedy by appending a question mark: <code> *?,+?,??</code>.
-  </p>
 </section>
 
 
@@ -237,7 +241,7 @@ Max Muster  +49(0761)123123
 <section>
   <h2>Compilation flags</h2>
   <p> 
-    <code>VERBOSE</code> allows arbitrary whitespace and comments within the pattern and is useful when writing complex regexes
+    <code>VERBOSE</code> allows arbitrary whitespace and comments within the pattern and is useful when writing complex regexes.
   </p>
   <pre><code class="python">
 &gt;&gt;&gt; re.compile(r'''
@@ -248,7 +252,7 @@ Max Muster  +49(0761)123123
 ... re.VERBOSE)
   </code></pre>
   <p class="fragment">
-    <b>Caveat</b>: To match a literal whitespace when using this flag, it has to be escaped.
+    <b>Caveat</b>: To match a <i>literal whitespace</i> when using this flag, it has to be escaped as “<code>\s</code>” or “<code>\ </code>”.
   </p>
 </section>
 
@@ -262,13 +266,15 @@ Max Muster  +49(0761)123123
 re.UNICODE = 64 = 0x01000000 
 re.IGNORECASE = 32 = 0x00100000 
   </code></pre>
+  <div class="fragment">
   <p>
     When chained with “|”, the 1s accumulate:
   </p>
   <pre><code>
 re.UNICODE | re.IGNORECASE = 0x01100000
   </code></pre>
-  <p>
+  </div>
+  <p class="fragment">
     The runtime can then check which positions are 1.
   </p>
 </section>
@@ -277,19 +283,19 @@ re.UNICODE | re.IGNORECASE = 0x01100000
 <section>
   <h2>Limitations of Python</h2>
   <p> 
-    Python regexes do not support <i>overlapping</i> matches.
+    Python’s “<code>re</code>” expressions do not support <i>overlapping</i> matches.
   </p>
   <pre><code class="python">
 &gt;&gt;&gt; text = '123 456 789 012 345'
 &gt;&gt;&gt; RE = re.compile(r'\d{3} \d{3}')     # Two three-digit groups
 &gt;&gt;&gt; for match in RE.finditer(text):
 ...   print match.span()
-(0, 7)
-(8, 15)
+(0, 7)    # 123 456
+(8, 15)   # 789 012; missing: 456 789, 012 345
   </code></pre>
   <p class="fragment">
-    Solution: DIY or use the <code>regex</code> module* <br/>
-    <small>*https://pypi.python.org/pypi/regex</small>
+  Solution: DIY :P <span class="fragment">or use the <code>regex</code> module*<br/>
+    <small>*https://pypi.python.org/pypi/regex</small></span>
   </p>
 
 </section>
