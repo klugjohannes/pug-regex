@@ -69,10 +69,42 @@
                python program?</p>
 
             <pre><code>
-Max Muster  01235/9123647
+data = """Max Muster  01235/9123647
 Eva Birne   034734/9349324
 Adam Apfel  +41(2352)3749237
+Otto Graf von Grünensfeld  +49(3249)334800""".splitlines()
             </code></pre>
+          </section>
+
+          <section>
+            <h1>Solution 1</h1>
+            <h2>Write an algorithm!</h2>
+
+<pre><code>for dataset in data:
+    for index, char in enumerate(dataset):
+        if char in (string.digits + '+'):
+            print(dataset[index:].strip())
+            break</code></pre>
+            <p class="fragment">
+              <small>This looks ugly enough for a simple tasks like that. Now
+                imagine we would be dealing with Otto Graf von Gr&uuml;nensfeld
+                der 1.</small>
+            </p>
+          </section>
+
+          <section>
+            <h1>Solution 2</h1>
+            <h2>Use regular expression!</h2>
+<pre><code>pattern = re.compile(r'([+]?[\d()/]+)', re.UNICODE)
+for dataset in data:
+    m = pattern.search(dataset)
+    if m:
+        print(m.groups()[0])</code></pre>
+            <p class="fragment">
+              <small>Granted: this may look equally frightening if you haven't
+                worked with regex before, but believe us it's much easier to
+                maintain.</small>
+            </p>
           </section>
         </section>
 
